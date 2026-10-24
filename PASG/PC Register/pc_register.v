@@ -9,7 +9,7 @@ module pc_register(
   always @(posedge Clk) begin
     if(Reset)
       Q <= 32'd0;
-    else
+    else if (LE)
       Q <= D;
   end
 
