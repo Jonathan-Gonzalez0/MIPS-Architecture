@@ -8,7 +8,7 @@ module npc_register(
 
   always @(posedge Clk) begin
     if(Reset)
-      Q <= 32'd0;
+      Q <= 32'd4;
     else if (LE)
       Q <= D;
   end

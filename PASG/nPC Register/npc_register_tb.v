@@ -29,13 +29,6 @@ module npc_register_tb;
     $display("Q = %b", Q);
 
     Clk = 1'b0;
-    Reset = 1'b0;
-    LE = 1'b0;
-    D = 32'b00000000000000000000000000000011;
-    #1
-    $display("Q = %b", Q);
-
-    Clk = 1'b0;
     Reset = 1'b1;
     LE = 1'b0;
     D = 32'b00000000000000000000000000000011;
@@ -53,9 +46,6 @@ module npc_register_tb;
     Reset = 1'b0;
     LE = 1'b1;
     D = 32'b00000000000000000000000000000011;
-    #1
-    $display("Q = %b", Q);
-
     #1
     $display("Q = %b", Q);
 
