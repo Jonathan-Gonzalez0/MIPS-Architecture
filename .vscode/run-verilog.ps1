@@ -22,14 +22,18 @@ try {
     }
 
     $sourceDirectory = $testbenchFile.Directory.FullName
-    $otherSources = @(Get-ChildItem -LiteralPath $sourceDirectory -File |
-        Where-Object { $_.Extension -eq '.v' -and $_.FullName -ne $testbenchFile.FullName } |
-        Sort-Object Name)
+    $otherSources = @(Get-ChildItem -LiteralPath $sourceDirectory -File -Recurse |
+        Where-Object {
+            $_.Extension -eq '.v' -and
+            $_.FullName -ne $testbenchFile.FullName -and
+            $_.BaseName -notmatch '_tb$'
+        } |
+        Sort-Object FullName)
     $simulationPath = Join-Path ([System.IO.Path]::GetTempPath()) (
         'verilog-' + [guid]::NewGuid().ToString('N') + '.vvp'
     )
 
-    # Sibling modules are library sources, so other testbenches do not run.
+    # Include implementations in child folders; only the active testbench is a root.
     $compilerArgs = @('-I', $sourceDirectory, '-o', $simulationPath)
     foreach ($source in $otherSources) {
         $compilerArgs += @('-l', $source.FullName)
