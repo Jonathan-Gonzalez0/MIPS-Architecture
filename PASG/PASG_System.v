@@ -27,7 +27,7 @@ module PASG_System(
 
   jump_multiplexer Jump(
     .S(J),
-    .A1(TAO),
+    .A1(TAI),
     .A0(A0),
     .O(nPC)
   );

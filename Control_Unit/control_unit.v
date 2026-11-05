@@ -246,16 +246,6 @@ module ControlUnit (
                     SRA = 1'b1;
                 end
 
-                // ADDIU rt, rs, imm16 (same data path; no overflow trap here)
-                6'b001001: begin
-                    OP = 4'b0000;
-                    OS2 = 2'b01;           // ADDIU also sign-extends imm16.
-                    RegDst = 2'b00;
-                    RF_LE = 1'b1;
-                    MemToReg = 1'b1;
-                    SRA = 1'b1;
-                end
-
                 // SLTI rt, rs, imm16: both operands are signed.
                 6'b001010: begin
                     OP = 4'b0110;
