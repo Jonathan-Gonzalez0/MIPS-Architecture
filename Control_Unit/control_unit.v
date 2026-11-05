@@ -64,72 +64,56 @@ module ControlUnit (
                     case (I[5:0])
                         // ADD rd, rs, rt
                         6'b100000: begin
-                            if (I[10:6] == 5'b00000) begin
-                                OP = 4'b0000;
+                                OP = 4'b0000; 
                                 RegDst = 2'b01;
                                 RF_LE = 1'b1;
                                 MemToReg = 1'b1;
                                 SRA = 1'b1;
                                 SRB = 1'b1;
-                            end
-                            else instruction_supported = 1'b0;
                         end
 
                         // AND rd, rs, rt
                         6'b100100: begin
-                            if (I[10:6] == 5'b00000) begin
                                 OP = 4'b0010;
                                 RegDst = 2'b01;
                                 RF_LE = 1'b1;
                                 MemToReg = 1'b1;
                                 SRA = 1'b1;
                                 SRB = 1'b1;
-                            end
-                            else instruction_supported = 1'b0;
                         end
 
                         // OR rd, rs, rt
                         6'b100101: begin
-                            if (I[10:6] == 5'b00000) begin
                                 OP = 4'b0011;
                                 RegDst = 2'b01;
                                 RF_LE = 1'b1;
                                 MemToReg = 1'b1;
                                 SRA = 1'b1;
                                 SRB = 1'b1;
-                            end
-                            else instruction_supported = 1'b0;
                         end
 
                         // XOR rd, rs, rt
                         6'b100110: begin
-                            if (I[10:6] == 5'b00000) begin
                                 OP = 4'b0100;
                                 RegDst = 2'b01;
                                 RF_LE = 1'b1;
                                 MemToReg = 1'b1;
                                 SRA = 1'b1;
                                 SRB = 1'b1;
-                            end
-                            else instruction_supported = 1'b0;
                         end
 
                         // NOR rd, rs, rt
                         6'b100111: begin
-                            if (I[10:6] == 5'b00000) begin
                                 OP = 4'b0101;
                                 RegDst = 2'b01;
                                 RF_LE = 1'b1;
                                 MemToReg = 1'b1;
                                 SRA = 1'b1;
                                 SRB = 1'b1;
-                            end
-                            else instruction_supported = 1'b0;
                         end
 
                         // SLT rd, rs, rt (signed comparison)
                         6'b101010: begin
-                            if (I[10:6] == 5'b00000) begin
                                 OP = 4'b0110;
                                 RegDst = 2'b01;
                                 RF_LE = 1'b1;
@@ -137,12 +121,8 @@ module ControlUnit (
                                 SRA = 1'b1;
                                 SRB = 1'b1;
                             end
-                            else instruction_supported = 1'b0;
-                        end
-
                         // MOVN rd, rs, rt
                         6'b001011: begin
-                            if (I[10:6] == 5'b00000) begin
                                 OP = 4'b0111;
                                 WriteCond = 2'b01; // Write when rt's value is nonzero
                                 RegDst = 2'b01;
@@ -150,75 +130,57 @@ module ControlUnit (
                                 MemToReg = 1'b1;
                                 SRA = 1'b1;
                                 SRB = 1'b1;
-                            end
-                            else instruction_supported = 1'b0;
                         end
 
                         // SLL rd, rt, sa
                         6'b000000: begin
-                            if (I[25:21] == 5'b00000) begin
                                 OS1 = 1'b1;
                                 OP = 4'b1001;
                                 RegDst = 2'b01;
                                 RF_LE = 1'b1;
                                 MemToReg = 1'b1;
                                 SRB = 1'b1;
-                            end
-                            else instruction_supported = 1'b0;
                         end
 
                         // SRL rd, rt, sa
                         6'b000010: begin
-                            if (I[25:21] == 5'b00000) begin
                                 OS1 = 1'b1;
                                 OP = 4'b1010;
                                 RegDst = 2'b01;
                                 RF_LE = 1'b1;
                                 MemToReg = 1'b1;
                                 SRB = 1'b1;
-                            end
-                            else instruction_supported = 1'b0;
                         end
 
                         // SRLV rd, rt, rs
                         6'b000110: begin
-                            if (I[10:6] == 5'b00000) begin
                                 OP = 4'b1010;
                                 RegDst = 2'b01;
                                 RF_LE = 1'b1;
                                 MemToReg = 1'b1;
                                 SRA = 1'b1;
                                 SRB = 1'b1;
-                            end
-                            else instruction_supported = 1'b0;
                         end
 
                         // SRAV rd, rt, rs
                         6'b000111: begin
-                            if (I[10:6] == 5'b00000) begin
                                 OP = 4'b1011;
                                 RegDst = 2'b01;
                                 RF_LE = 1'b1;
                                 MemToReg = 1'b1;
                                 SRA = 1'b1;
                                 SRB = 1'b1;
-                            end
-                            else instruction_supported = 1'b0;
                         end
 
                         // JALR rd, rs: notes pages 41-42 specify the link destination.
                         6'b001001: begin
-                            if ((I[20:16] == 5'b00000) &&
-                                (I[10:6] == 5'b00000)) begin
                                 Jump = 1'b1;
-                                OP = 4'b0111;
+                                OP = 4'b1111;
                                 RegDst = 2'b01;
                                 RF_LE = 1'b1;
                                 MemToReg = 1'b1;
                                 OutSel = 1'b1;
                                 SRA = 1'b1;
-                            end
-                            else instruction_supported = 1'b0;
                         end
 
                         // SUB rd, rs, rt
@@ -266,7 +228,7 @@ module ControlUnit (
                         // JR rs
                         6'b001000: begin
                             Jump = 1'b1;       // Target comes from TAG in ID.
-                            OP = 4'b0111;
+                            OP = 4'b1111;
                             SRA = 1'b1;
                         end
 
@@ -305,10 +267,31 @@ module ControlUnit (
 
                 // ANDI / ORI / XORI require {16'b0, imm16}.
                 // SOH has no such selector. Keep all controls at zero.
-                6'b001100, 6'b001101, 6'b001110: begin
-                    instruction_supported = 1'b0;
+                6'b001100: begin
+                    OS2 = 2'b01;
+                    OP = 4'b0010;
+                    RF_LE = 1'b1;
+                    MemToReg = 1'b1;
+                    SRA = 1'b1;
                 end
 
+                //ORI
+                6'b001101: begin
+                    OS2 = 2'b01;
+                    OP = 4'b0011;
+                    RF_LE = 1'b1;
+                    MemToReg = 1'b1;
+                    SRA = 1'b1;
+                end
+
+                //XORI
+                6'b001110: begin
+                    OS2 = 2'b01;
+                    OP = 4'b0100;
+                    RF_LE = 1'b1;
+                    MemToReg = 1'b1;
+                    SRA = 1'b1;
+                end
                 // LUI rt, imm16
                 6'b001111: begin
                     OP = 4'b1000;
