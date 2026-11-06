@@ -48,8 +48,25 @@ try {
 
     if ($resultCode -eq 0) {
         Write-Host "Running $($testbenchFile.Name)..."
-        & $vvpPath $simulationPath
-        $resultCode = $LASTEXITCODE
+        if ($testbenchFile.BaseName -eq 'MIPS_top_tb') {
+            $tracePath = Join-Path $sourceDirectory 'MIPS_top_output.txt'
+            $simulationOutput = @()
+            $simulationErrorPreference = $ErrorActionPreference
+            try {
+                # Capture module alerts and native errors without losing vvp's exit code.
+                $ErrorActionPreference = 'Continue'
+                & $vvpPath $simulationPath 2>&1 | Tee-Object -Variable simulationOutput
+                $resultCode = $LASTEXITCODE
+            } finally {
+                $ErrorActionPreference = $simulationErrorPreference
+                $simulationOutput | ForEach-Object { $_.ToString() } |
+                    Set-Content -LiteralPath $tracePath -Encoding UTF8
+            }
+            Write-Host "Simulation output saved to $tracePath"
+        } else {
+            & $vvpPath $simulationPath
+            $resultCode = $LASTEXITCODE
+        }
     }
 } catch {
     Write-Host "Verilog task: $($_.Exception.Message)" -ForegroundColor Red

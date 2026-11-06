@@ -1,0 +1,133 @@
+﻿
+NOP (ID), PC=0, I=00000000, t=2 ns, S=0
+Etapa ID: RESET/NOP | Jump=0 RegDst=00 OS1=0 OS2=00 OP=0000 BranchType=000 WriteCond=00 RF_LE=0 MemToReg=0 RW=0 E=0 Size=00 SE=0 L=0 OutSel=0 SRA=0 SRB=0
+Etapa EX: RESET/NOP | OS1=0 OS2=00 OP=0000 BranchType=000 WriteCond=00 RF_LE=0 MemToReg=0 RW=0 E=0 Size=00 SE=0 L=0 OutSel=0
+Etapa MEM: RESET/NOP | RF_LE=0 MemToReg=0 RW=0 E=0 Size=00 SE=0
+Etapa WB: RESET/NOP | RF_LE=0
+
+ADDI (ID), PC=0, I=20050000, t=6 ns, S=0
+Etapa ID: ADDI PC=0 | Jump=0 RegDst=00 OS1=0 OS2=01 OP=0000 BranchType=000 WriteCond=00 RF_LE=1 MemToReg=1 RW=0 E=0 Size=00 SE=0 L=0 OutSel=0 SRA=1 SRB=0
+Etapa EX: RESET/NOP | OS1=0 OS2=00 OP=0000 BranchType=000 WriteCond=00 RF_LE=0 MemToReg=0 RW=0 E=0 Size=00 SE=0 L=0 OutSel=0
+Etapa MEM: RESET/NOP | RF_LE=0 MemToReg=0 RW=0 E=0 Size=00 SE=0
+Etapa WB: RESET/NOP | RF_LE=0
+
+SUB (ID), PC=4, I=00031822, t=10 ns, S=0
+Etapa ID: SUB PC=4 | Jump=0 RegDst=01 OS1=0 OS2=00 OP=0001 BranchType=000 WriteCond=00 RF_LE=1 MemToReg=1 RW=0 E=0 Size=00 SE=0 L=0 OutSel=0 SRA=1 SRB=1
+Etapa EX: ADDI PC=0 | OS1=0 OS2=01 OP=0000 BranchType=000 WriteCond=00 RF_LE=1 MemToReg=1 RW=0 E=0 Size=00 SE=0 L=0 OutSel=0
+Etapa MEM: RESET/NOP | RF_LE=0 MemToReg=0 RW=0 E=0 Size=00 SE=0
+Etapa WB: RESET/NOP | RF_LE=0
+
+LBU (ID), PC=8, I=90220000, t=14 ns, S=0
+Etapa ID: LBU PC=8 | Jump=0 RegDst=00 OS1=0 OS2=01 OP=0000 BranchType=000 WriteCond=00 RF_LE=1 MemToReg=0 RW=0 E=0 Size=00 SE=0 L=1 OutSel=0 SRA=1 SRB=0
+Etapa EX: SUB PC=4 | OS1=0 OS2=00 OP=0001 BranchType=000 WriteCond=00 RF_LE=1 MemToReg=1 RW=0 E=0 Size=00 SE=0 L=0 OutSel=0
+Etapa MEM: ADDI PC=0 | RF_LE=1 MemToReg=1 RW=0 E=0 Size=00 SE=0
+Etapa WB: RESET/NOP | RF_LE=0
+
+LH (ID), PC=12, I=84220000, t=18 ns, S=0
+Etapa ID: LH PC=12 | Jump=0 RegDst=00 OS1=0 OS2=01 OP=0000 BranchType=000 WriteCond=00 RF_LE=1 MemToReg=0 RW=0 E=0 Size=01 SE=1 L=1 OutSel=0 SRA=1 SRB=0
+Etapa EX: LBU PC=8 | OS1=0 OS2=01 OP=0000 BranchType=000 WriteCond=00 RF_LE=1 MemToReg=0 RW=0 E=0 Size=00 SE=0 L=1 OutSel=0
+Etapa MEM: SUB PC=4 | RF_LE=1 MemToReg=1 RW=0 E=0 Size=00 SE=0
+Etapa WB: ADDI PC=0 | RF_LE=1
+
+SW (ID), PC=16, I=ac250001, t=22 ns, S=0
+Etapa ID: SW PC=16 | Jump=0 RegDst=00 OS1=0 OS2=01 OP=0000 BranchType=000 WriteCond=00 RF_LE=0 MemToReg=0 RW=1 E=1 Size=10 SE=0 L=0 OutSel=0 SRA=1 SRB=1
+Etapa EX: LH PC=12 | OS1=0 OS2=01 OP=0000 BranchType=000 WriteCond=00 RF_LE=1 MemToReg=0 RW=0 E=0 Size=01 SE=1 L=1 OutSel=0
+Etapa MEM: LBU PC=8 | RF_LE=1 MemToReg=0 RW=0 E=0 Size=00 SE=0
+Etapa WB: SUB PC=4 | RF_LE=1
+
+SRA (ID), PC=20, I=00031903, t=26 ns, S=0
+Etapa ID: SRA PC=20 | Jump=0 RegDst=01 OS1=1 OS2=00 OP=1011 BranchType=000 WriteCond=00 RF_LE=1 MemToReg=1 RW=0 E=0 Size=00 SE=0 L=0 OutSel=0 SRA=0 SRB=1
+Etapa EX: SW PC=16 | OS1=0 OS2=01 OP=0000 BranchType=000 WriteCond=00 RF_LE=0 MemToReg=0 RW=1 E=1 Size=10 SE=0 L=0 OutSel=0
+Etapa MEM: LH PC=12 | RF_LE=1 MemToReg=0 RW=0 E=0 Size=01 SE=1
+Etapa WB: LBU PC=8 | RF_LE=1
+ALERT: SLLV has nonzero unused sa=4 in I=00233904; ignored for the Phase III demo. Review the PDF encoding.
+
+SLLV (ID), PC=24, I=00233904, t=30 ns, S=0
+Etapa ID: SLLV PC=24 | Jump=0 RegDst=01 OS1=0 OS2=00 OP=1001 BranchType=000 WriteCond=00 RF_LE=1 MemToReg=1 RW=0 E=0 Size=00 SE=0 L=0 OutSel=0 SRA=1 SRB=1
+Etapa EX: SRA PC=20 | OS1=1 OS2=00 OP=1011 BranchType=000 WriteCond=00 RF_LE=1 MemToReg=1 RW=0 E=0 Size=00 SE=0 L=0 OutSel=0
+Etapa MEM: SW PC=16 | RF_LE=0 MemToReg=0 RW=1 E=1 Size=10 SE=0
+Etapa WB: LH PC=12 | RF_LE=1
+
+NOP (ID), PC=28, I=00000000, t=34 ns, S=0
+Etapa ID: NOP PC=28 | Jump=0 RegDst=00 OS1=0 OS2=00 OP=0000 BranchType=000 WriteCond=00 RF_LE=0 MemToReg=0 RW=0 E=0 Size=00 SE=0 L=0 OutSel=0 SRA=0 SRB=0
+Etapa EX: SLLV PC=24 | OS1=0 OS2=00 OP=1001 BranchType=000 WriteCond=00 RF_LE=1 MemToReg=1 RW=0 E=0 Size=00 SE=0 L=0 OutSel=0
+Etapa MEM: SRA PC=20 | RF_LE=1 MemToReg=1 RW=0 E=0 Size=00 SE=0
+Etapa WB: SW PC=16 | RF_LE=0
+
+MOVZ (ID), PC=32, I=0003180a, t=38 ns, S=0
+Etapa ID: MOVZ PC=32 | Jump=0 RegDst=01 OS1=0 OS2=00 OP=0111 BranchType=000 WriteCond=10 RF_LE=1 MemToReg=1 RW=0 E=0 Size=00 SE=0 L=0 OutSel=0 SRA=1 SRB=1
+Etapa EX: NOP PC=28 | OS1=0 OS2=00 OP=0000 BranchType=000 WriteCond=00 RF_LE=0 MemToReg=0 RW=0 E=0 Size=00 SE=0 L=0 OutSel=0
+Etapa MEM: SLLV PC=24 | RF_LE=1 MemToReg=1 RW=0 E=0 Size=00 SE=0
+Etapa WB: SRA PC=20 | RF_LE=1
+
+BGEZAL (ID), PC=36, I=0471fffd, t=42 ns, S=0
+Etapa ID: BGEZAL PC=36 | Jump=0 RegDst=10 OS1=0 OS2=00 OP=0111 BranchType=010 WriteCond=11 RF_LE=1 MemToReg=1 RW=0 E=0 Size=00 SE=0 L=0 OutSel=1 SRA=1 SRB=0
+Etapa EX: MOVZ PC=32 | OS1=0 OS2=00 OP=0111 BranchType=000 WriteCond=10 RF_LE=1 MemToReg=1 RW=0 E=0 Size=00 SE=0 L=0 OutSel=0
+Etapa MEM: NOP PC=28 | RF_LE=0 MemToReg=0 RW=0 E=0 Size=00 SE=0
+Etapa WB: SLLV PC=24 | RF_LE=1
+
+BEQ (ID), PC=40, I=1060fffd, t=46 ns, S=0
+Etapa ID: BEQ PC=40 | Jump=0 RegDst=00 OS1=0 OS2=00 OP=0001 BranchType=001 WriteCond=00 RF_LE=0 MemToReg=0 RW=0 E=0 Size=00 SE=0 L=0 OutSel=0 SRA=1 SRB=1
+Etapa EX: BGEZAL PC=36 | OS1=0 OS2=00 OP=0111 BranchType=010 WriteCond=11 RF_LE=1 MemToReg=1 RW=0 E=0 Size=00 SE=0 L=0 OutSel=1
+Etapa MEM: MOVZ PC=32 | RF_LE=1 MemToReg=1 RW=0 E=0 Size=00 SE=0
+Etapa WB: NOP PC=28 | RF_LE=0
+
+BGEZAL (ID), PC=44, I=0471fffd, t=50 ns, S=0
+Etapa ID: BGEZAL PC=44 | Jump=0 RegDst=10 OS1=0 OS2=00 OP=0111 BranchType=010 WriteCond=11 RF_LE=1 MemToReg=1 RW=0 E=0 Size=00 SE=0 L=0 OutSel=1 SRA=1 SRB=0
+Etapa EX: BEQ PC=40 | OS1=0 OS2=00 OP=0001 BranchType=001 WriteCond=00 RF_LE=0 MemToReg=0 RW=0 E=0 Size=00 SE=0 L=0 OutSel=0
+Etapa MEM: BGEZAL PC=36 | RF_LE=1 MemToReg=1 RW=0 E=0 Size=00 SE=0
+Etapa WB: MOVZ PC=32 | RF_LE=1
+
+BGTZ (ID), PC=48, I=1c60fffd, t=54 ns, S=0
+Etapa ID: BGTZ PC=48 | Jump=0 RegDst=00 OS1=0 OS2=00 OP=0111 BranchType=011 WriteCond=00 RF_LE=0 MemToReg=0 RW=0 E=0 Size=00 SE=0 L=0 OutSel=0 SRA=1 SRB=0
+Etapa EX: BGEZAL PC=44 | OS1=0 OS2=00 OP=0111 BranchType=010 WriteCond=11 RF_LE=1 MemToReg=1 RW=0 E=0 Size=00 SE=0 L=0 OutSel=1
+Etapa MEM: BEQ PC=40 | RF_LE=0 MemToReg=0 RW=0 E=0 Size=00 SE=0
+Etapa WB: BGEZAL PC=36 | RF_LE=1
+
+JAL (ID), PC=52, I=0c000004, t=58 ns, S=0
+Etapa ID: JAL PC=52 | Jump=1 RegDst=10 OS1=0 OS2=00 OP=0000 BranchType=000 WriteCond=00 RF_LE=1 MemToReg=1 RW=0 E=0 Size=00 SE=0 L=0 OutSel=1 SRA=0 SRB=0
+Etapa EX: BGTZ PC=48 | OS1=0 OS2=00 OP=0111 BranchType=011 WriteCond=00 RF_LE=0 MemToReg=0 RW=0 E=0 Size=00 SE=0 L=0 OutSel=0
+Etapa MEM: BGEZAL PC=44 | RF_LE=1 MemToReg=1 RW=0 E=0 Size=00 SE=0
+Etapa WB: BEQ PC=40 | RF_LE=0
+
+JR (ID), PC=56, I=03e00008, t=62 ns, S=0
+Etapa ID: JR PC=56 | Jump=1 RegDst=00 OS1=0 OS2=00 OP=1111 BranchType=000 WriteCond=00 RF_LE=0 MemToReg=0 RW=0 E=0 Size=00 SE=0 L=0 OutSel=0 SRA=1 SRB=0
+Etapa EX: JAL PC=52 | OS1=0 OS2=00 OP=0000 BranchType=000 WriteCond=00 RF_LE=1 MemToReg=1 RW=0 E=0 Size=00 SE=0 L=0 OutSel=1
+Etapa MEM: BGTZ PC=48 | RF_LE=0 MemToReg=0 RW=0 E=0 Size=00 SE=0
+Etapa WB: BGEZAL PC=44 | RF_LE=1
+
+LUI (ID), PC=60, I=3c053f0f, t=66 ns, S=0
+Etapa ID: LUI PC=60 | Jump=0 RegDst=00 OS1=0 OS2=10 OP=1000 BranchType=000 WriteCond=00 RF_LE=1 MemToReg=1 RW=0 E=0 Size=00 SE=0 L=0 OutSel=0 SRA=0 SRB=0
+Etapa EX: JR PC=56 | OS1=0 OS2=00 OP=1111 BranchType=000 WriteCond=00 RF_LE=0 MemToReg=0 RW=0 E=0 Size=00 SE=0 L=0 OutSel=0
+Etapa MEM: JAL PC=52 | RF_LE=1 MemToReg=1 RW=0 E=0 Size=00 SE=0
+Etapa WB: BGTZ PC=48 | RF_LE=0
+ALERT: instruction outside implemented subset: I=24050000 opcode=001001 function=000000
+
+ADDIU (ID), PC=64, I=24050000, t=70 ns, S=0
+Etapa ID: ADDIU PC=64 [UNSUPPORTED] | Jump=0 RegDst=00 OS1=0 OS2=00 OP=0000 BranchType=000 WriteCond=00 RF_LE=0 MemToReg=0 RW=0 E=0 Size=00 SE=0 L=0 OutSel=0 SRA=0 SRB=0
+Etapa EX: LUI PC=60 | OS1=0 OS2=10 OP=1000 BranchType=000 WriteCond=00 RF_LE=1 MemToReg=1 RW=0 E=0 Size=00 SE=0 L=0 OutSel=0
+Etapa MEM: JR PC=56 | RF_LE=0 MemToReg=0 RW=0 E=0 Size=00 SE=0
+Etapa WB: JAL PC=52 | RF_LE=1
+ALERT: control unit rejects this instruction/encoding.
+
+SUB (ID), PC=68, I=00031822, t=74 ns, S=1
+Etapa ID: SUB PC=68 | Jump=0 RegDst=01 OS1=0 OS2=00 OP=0001 BranchType=000 WriteCond=00 RF_LE=1 MemToReg=1 RW=0 E=0 Size=00 SE=0 L=0 OutSel=0 SRA=1 SRB=1
+Etapa EX: BUBBLE (S=1) | OS1=0 OS2=00 OP=0000 BranchType=000 WriteCond=00 RF_LE=0 MemToReg=0 RW=0 E=0 Size=00 SE=0 L=0 OutSel=0
+Etapa MEM: LUI PC=60 | RF_LE=1 MemToReg=1 RW=0 E=0 Size=00 SE=0
+Etapa WB: JR PC=56 | RF_LE=0
+
+LBU (ID), PC=72, I=90220000, t=78 ns, S=1
+Etapa ID: LBU PC=72 | Jump=0 RegDst=00 OS1=0 OS2=01 OP=0000 BranchType=000 WriteCond=00 RF_LE=1 MemToReg=0 RW=0 E=0 Size=00 SE=0 L=1 OutSel=0 SRA=1 SRB=0
+Etapa EX: BUBBLE (S=1) | OS1=0 OS2=00 OP=0000 BranchType=000 WriteCond=00 RF_LE=0 MemToReg=0 RW=0 E=0 Size=00 SE=0 L=0 OutSel=0
+Etapa MEM: BUBBLE (S=1) | RF_LE=0 MemToReg=0 RW=0 E=0 Size=00 SE=0
+Etapa WB: LUI PC=60 | RF_LE=1
+
+LH (ID), PC=76, I=84220000, t=82 ns, S=1
+Etapa ID: LH PC=76 | Jump=0 RegDst=00 OS1=0 OS2=01 OP=0000 BranchType=000 WriteCond=00 RF_LE=1 MemToReg=0 RW=0 E=0 Size=01 SE=1 L=1 OutSel=0 SRA=1 SRB=0
+Etapa EX: BUBBLE (S=1) | OS1=0 OS2=00 OP=0000 BranchType=000 WriteCond=00 RF_LE=0 MemToReg=0 RW=0 E=0 Size=00 SE=0 L=0 OutSel=0
+Etapa MEM: BUBBLE (S=1) | RF_LE=0 MemToReg=0 RW=0 E=0 Size=00 SE=0
+Etapa WB: BUBBLE (S=1) | RF_LE=0
+
+Integration checks: 176 passed, 0 failed.
+Decoder alerts: 1. Inspect these separately from the wiring/latency checks.
+C:\Users\jonat\OneDrive\Documents\UPRM\Fall 2026\ICOM4215\MIPS-Architecture\MIPS_top_tb.v:113: $finish called at 84000 (1ps)

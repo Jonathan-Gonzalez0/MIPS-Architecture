@@ -78,6 +78,13 @@ module MIPS_top_tb;
     reg [31:0] expected_ID_PC;
     reg [31:0] expected_IF_PC;
 
+    // Monitor-only labels: follow the instruction associated with each control.
+    // 0 = reset/empty, 1 = instruction, 2 = inserted bubble, 3 = rejected decode.
+    reg trace_ID_ready;
+    reg [1:0] trace_EX_kind, trace_MEM_kind, trace_WB_kind;
+    reg [31:0] trace_EX_word, trace_MEM_word, trace_WB_word;
+    reg [31:0] trace_EX_PC, trace_MEM_PC, trace_WB_PC;
+
     // Requirement: Clk starts at 0 and changes every two time units.
     initial begin
         Clk = 1'b0;
@@ -156,6 +163,37 @@ module MIPS_top_tb;
         end
     endtask
 
+    task print_stage_label;
+        input [23:0] stage_name;
+        input [1:0] kind;
+        input [31:0] word;
+        input [31:0] pc_value;
+        begin
+            if (kind == 2'd0)
+                $write("Etapa %0s: RESET/NOP | ", stage_name);
+            else if (kind == 2'd2)
+                $write("Etapa %0s: BUBBLE (S=1) | ", stage_name);
+            else if (kind == 2'd3)
+                $write("Etapa %0s: %0s PC=%0d [UNSUPPORTED] | ",
+                       stage_name, instruction_name(word), pc_value);
+            else
+                $write("Etapa %0s: %0s PC=%0d | ",
+                       stage_name, instruction_name(word), pc_value);
+        end
+    endtask
+
+    task check_first_register_writes;
+        input [31:0] word;
+        input [31:0] pc_value;
+        input write_enable;
+        input [319:0] stage_description;
+        begin
+            if (((word === 32'h20050000) && (pc_value === 32'd0)) ||
+                ((word === 32'h00031822) && (pc_value === 32'd4)))
+                check(write_enable === 1'b1, stage_description);
+        end
+    endtask
+
     always @(posedge Clk) begin
         // Capture what each register must sample BEFORE nonblocking updates.
         expected_instruction = Reset ? 32'b0 : dut.Instruction_Memory;
@@ -164,6 +202,42 @@ module MIPS_top_tb;
         expected_EX = Reset ? 21'b0 : controls_mux;
         expected_MEM = Reset ? 7'b0 : controls_MEM_input;
         expected_WB = Reset ? 1'b0 : dut.RF_LE_mem;
+
+        // These diagnostic tags sample the OLD ID instruction, just like IDEX.
+        // Update downstream tags first so every label advances only one stage.
+        if (Reset) begin
+            trace_ID_ready = 1'b0;
+            trace_EX_kind = 2'd0;
+            trace_MEM_kind = 2'd0;
+            trace_WB_kind = 2'd0;
+            trace_EX_word = 32'b0;
+            trace_MEM_word = 32'b0;
+            trace_WB_word = 32'b0;
+            trace_EX_PC = 32'b0;
+            trace_MEM_PC = 32'b0;
+            trace_WB_PC = 32'b0;
+        end else begin
+            trace_WB_kind = trace_MEM_kind;
+            trace_WB_word = trace_MEM_word;
+            trace_WB_PC = trace_MEM_PC;
+            trace_MEM_kind = trace_EX_kind;
+            trace_MEM_word = trace_EX_word;
+            trace_MEM_PC = trace_EX_PC;
+            if (S) begin
+                trace_EX_kind = 2'd2;
+                trace_EX_word = 32'b0;
+                trace_EX_PC = 32'b0;
+            end else if (!trace_ID_ready) begin
+                trace_EX_kind = 2'd0;
+                trace_EX_word = 32'b0;
+                trace_EX_PC = 32'b0;
+            end else begin
+                trace_EX_kind = dut.CU.instruction_supported ? 2'd1 : 2'd3;
+                trace_EX_word = dut.Instruction;
+                trace_EX_PC = dut.PASG.Q0;
+            end
+            trace_ID_ready = 1'b1;
+        end
 
         // Wait one picosecond for registers, ROM, and decoder to settle.
         #0.001;
@@ -176,18 +250,33 @@ module MIPS_top_tb;
         check(controls_mux === (S ? 21'b0 : controls_ID), "NOP mux selection");
         check((^controls_ID !== 1'bx), "ID controls have no floating/unknown bits");
 
-        $display("\n%0s, PC=%0d, I=%h, t=%0t, S=%b",
+        check_first_register_writes(dut.Instruction, dut.PASG.Q0, dut.RF_LE_ID,
+                                    "ADDI/SUB RF_LE stays asserted in ID");
+        check_first_register_writes(trace_EX_word, trace_EX_PC, dut.RF_LE_ex,
+                                    "ADDI/SUB RF_LE stays asserted in EX");
+        check_first_register_writes(trace_MEM_word, trace_MEM_PC, dut.RF_LE_mem,
+                                    "ADDI/SUB RF_LE stays asserted in MEM");
+        check_first_register_writes(trace_WB_word, trace_WB_PC, dut.RF_LE_wb,
+                                    "ADDI/SUB RF_LE stays asserted in WB");
+
+        $display("\n%0s (ID), PC=%0d, I=%h, t=%0t, S=%b",
                  instruction_name(dut.Instruction), dut.PASG.Q0, dut.Instruction, $time, S);
-        $display("Etapa ID: Jump=%b RegDst=%b OS1=%b OS2=%b OP=%b BranchType=%b WriteCond=%b RF_LE=%b MemToReg=%b RW=%b E=%b Size=%b SE=%b L=%b OutSel=%b SRA=%b SRB=%b",
+        print_stage_label("ID", Reset ? 2'd0 :
+                          (dut.CU.instruction_supported ? 2'd1 : 2'd3),
+                          dut.Instruction, dut.PASG.Q0);
+        $display("Jump=%b RegDst=%b OS1=%b OS2=%b OP=%b BranchType=%b WriteCond=%b RF_LE=%b MemToReg=%b RW=%b E=%b Size=%b SE=%b L=%b OutSel=%b SRA=%b SRB=%b",
             dut.Jump_ID, dut.RegDst_ID, dut.OS1_ID, dut.OS2_ID, dut.OP_ID,
             dut.BranchType_ID, dut.WriteCond_ID, dut.RF_LE_ID, dut.MemToReg_ID,
             dut.RW_ID, dut.E_ID, dut.Size_ID, dut.SE_ID, dut.L_ID, dut.OutSel_ID, dut.SRA_ID, dut.SRB_ID);
-        $display("Etapa EX: OS1=%b OS2=%b OP=%b BranchType=%b WriteCond=%b RF_LE=%b MemToReg=%b RW=%b E=%b Size=%b SE=%b L=%b OutSel=%b",
+        print_stage_label("EX", trace_EX_kind, trace_EX_word, trace_EX_PC);
+        $display("OS1=%b OS2=%b OP=%b BranchType=%b WriteCond=%b RF_LE=%b MemToReg=%b RW=%b E=%b Size=%b SE=%b L=%b OutSel=%b",
             dut.OS1_ex, dut.OS2_ex, dut.OP_ex, dut.BranchType_ex, dut.WriteCond_ex,
             dut.RF_LE_ex, dut.MemToReg_ex, dut.RW_ex, dut.E_ex, dut.Size_ex, dut.SE_ex, dut.L_ex, dut.OutSel_ex);
-        $display("Etapa MEM: RF_LE=%b MemToReg=%b RW=%b E=%b Size=%b SE=%b",
+        print_stage_label("MEM", trace_MEM_kind, trace_MEM_word, trace_MEM_PC);
+        $display("RF_LE=%b MemToReg=%b RW=%b E=%b Size=%b SE=%b",
             dut.RF_LE_mem, dut.MemToReg_mem, dut.RW_mem, dut.E_mem, dut.Size_mem, dut.SE_mem);
-        $display("Etapa WB: RF_LE=%b", dut.RF_LE_wb);
+        print_stage_label("WB", trace_WB_kind, trace_WB_word, trace_WB_PC);
+        $display("RF_LE=%b", dut.RF_LE_wb);
         if (dut.CU.instruction_supported === 1'b0) begin
             decoder_alerts = decoder_alerts + 1;
             $display("ALERT: control unit rejects this instruction/encoding.");
