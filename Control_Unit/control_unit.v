@@ -512,11 +512,6 @@ module ControlUnit (
                          I, I[31:26], I[5:0]);
             end
         end
-        if ((I[31:26] == 6'b000000) && (I[5:0] == 6'b000100) &&
-            (I[10:6] != 5'b00000)) begin
-            $display("ALERT: SLLV has nonzero unused sa=%0d in I=%h; ignored for the Phase III demo. Review the PDF encoding.",
-                     I[10:6], I);
-        end
         // synthesis translate_on
     end
 endmodule

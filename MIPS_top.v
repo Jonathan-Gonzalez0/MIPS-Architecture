@@ -26,6 +26,7 @@ module MIPS_top(
   wire SRB_ID;
 
   PASG_System PASG(
+    //Input de las Señales
     .Reset(Reset),
     .LE(1'b1),
     .Clk(Clk),
@@ -34,6 +35,8 @@ module MIPS_top(
     .TAI(32'b0),
     .RS(32'b0),
     .Ins(Instruction_Memory),
+
+    //Output de las señales
     .PC(program_counter),
     .I(Instruction),
     .TAO(target_address)
