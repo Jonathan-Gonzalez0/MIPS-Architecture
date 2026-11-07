@@ -13,18 +13,18 @@ module MIPS_top_tb;
       .S(S)
       );
       
-    reg[8*4-1:0] Instruction_Name;
+    reg[8*6-1:0] Instruction_Name;
     wire[31:0] PC_IF = mips_top.program_counter; //PC viene del input del PLR
     
-    reg[8*4-1:0] Instruction_Name_ID;
+    reg[8*6-1:0] Instruction_Name_ID;
     wire[31:0] PC_ID = mips_top.PASG.Q0; 
     wire[31:0] INS_ID = mips_top.PASG.I;
 
-    reg[8*4-1:0] Instruction_Name_EX;
+    reg[8*6-1:0] Instruction_Name_EX;
 
-    reg[8*4-1:0] Instruction_Name_MEM;
+    reg[8*6-1:0] Instruction_Name_MEM;
 
-    reg[8*4-1:0] Instruction_Name_WB;
+    reg[8*6-1:0] Instruction_Name_WB;
 
   initial begin
     $readmemb(
@@ -40,6 +40,7 @@ module MIPS_top_tb;
 
       #3 Reset = 1'b0;
 
+      #72 S = 1'b1;
       
       #84
       $finish;
@@ -193,7 +194,11 @@ module MIPS_top_tb;
         Instruction_Name_MEM = "NOP";
         Instruction_Name_WB = "NOP";
       end
-    else
+    else if(S)begin
+      Instruction_Name_EX <= "Bubble";
+      Instruction_Name_MEM <= Instruction_Name_EX;
+      Instruction_Name_WB <= Instruction_Name_MEM;
+    end    else
       begin
         Instruction_Name_EX <= Instruction_Name_ID;
         Instruction_Name_MEM <= Instruction_Name_EX;

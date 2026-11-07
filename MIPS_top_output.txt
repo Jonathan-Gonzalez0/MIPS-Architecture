@@ -52,47 +52,47 @@ Etapa EX: Ins = SLLV, OS1 = 0, OS2 = 00, OP = 1001, BranchType = 000, WriteCond 
 Etapa MEM: Ins = SRA, RF_LE = 1, MemToReg = 1, RW = 0, E = 0, Size = 00, SE = 0
 Etapa WB: Ins = SW, RF_LE = 0
 
-Etapa IF: Ins = EZAL, PC = 36, t = 38ns
+Etapa IF: Ins = BGEZAL, PC = 36, t = 38ns
 Etapa ID: Ins = MOVZ Jump = 0, RegDest = 01, OS1 = 0, OS2 = 00, OP = 0111, BranchType = 000, WriteCond = 10, RF_LE = 1, MemToReg = 1, RW = 0, E = 0, Size = 00, SE = 0, L = 0, OutSel = 0, SRA = 1, SRB = 1
 Etapa EX: Ins = NOP, OS1 = 0, OS2 = 00, OP = 0000, BranchType = 000, WriteCond = 00, RF_LE = 0, MemToReg = 0, RW = 0, E = 0, Size = 00, SE = 0, L = 0, OutSel = 0
 Etapa MEM: Ins = SLLV, RF_LE = 1, MemToReg = 1, RW = 0, E = 0, Size = 00, SE = 0
 Etapa WB: Ins = SRA, RF_LE = 1
 
 Etapa IF: Ins = BEQ, PC = 40, t = 42ns
-Etapa ID: Ins = EZAL Jump = 0, RegDest = 10, OS1 = 0, OS2 = 00, OP = 0111, BranchType = 010, WriteCond = 11, RF_LE = 1, MemToReg = 1, RW = 0, E = 0, Size = 00, SE = 0, L = 0, OutSel = 1, SRA = 1, SRB = 0
+Etapa ID: Ins = BGEZAL Jump = 0, RegDest = 10, OS1 = 0, OS2 = 00, OP = 0111, BranchType = 010, WriteCond = 11, RF_LE = 1, MemToReg = 1, RW = 0, E = 0, Size = 00, SE = 0, L = 0, OutSel = 1, SRA = 1, SRB = 0
 Etapa EX: Ins = MOVZ, OS1 = 0, OS2 = 00, OP = 0111, BranchType = 000, WriteCond = 10, RF_LE = 1, MemToReg = 1, RW = 0, E = 0, Size = 00, SE = 0, L = 0, OutSel = 0
 Etapa MEM: Ins = NOP, RF_LE = 0, MemToReg = 0, RW = 0, E = 0, Size = 00, SE = 0
 Etapa WB: Ins = SLLV, RF_LE = 1
 
-Etapa IF: Ins = EZAL, PC = 44, t = 46ns
+Etapa IF: Ins = BGEZAL, PC = 44, t = 46ns
 Etapa ID: Ins = BEQ Jump = 0, RegDest = 00, OS1 = 0, OS2 = 00, OP = 0001, BranchType = 001, WriteCond = 00, RF_LE = 0, MemToReg = 0, RW = 0, E = 0, Size = 00, SE = 0, L = 0, OutSel = 0, SRA = 1, SRB = 1
-Etapa EX: Ins = EZAL, OS1 = 0, OS2 = 00, OP = 0111, BranchType = 010, WriteCond = 11, RF_LE = 1, MemToReg = 1, RW = 0, E = 0, Size = 00, SE = 0, L = 0, OutSel = 1
+Etapa EX: Ins = BGEZAL, OS1 = 0, OS2 = 00, OP = 0111, BranchType = 010, WriteCond = 11, RF_LE = 1, MemToReg = 1, RW = 0, E = 0, Size = 00, SE = 0, L = 0, OutSel = 1
 Etapa MEM: Ins = MOVZ, RF_LE = 1, MemToReg = 1, RW = 0, E = 0, Size = 00, SE = 0
 Etapa WB: Ins = NOP, RF_LE = 0
 
 Etapa IF: Ins = BGTZ, PC = 48, t = 50ns
-Etapa ID: Ins = EZAL Jump = 0, RegDest = 10, OS1 = 0, OS2 = 00, OP = 0111, BranchType = 010, WriteCond = 11, RF_LE = 1, MemToReg = 1, RW = 0, E = 0, Size = 00, SE = 0, L = 0, OutSel = 1, SRA = 1, SRB = 0
+Etapa ID: Ins = BGEZAL Jump = 0, RegDest = 10, OS1 = 0, OS2 = 00, OP = 0111, BranchType = 010, WriteCond = 11, RF_LE = 1, MemToReg = 1, RW = 0, E = 0, Size = 00, SE = 0, L = 0, OutSel = 1, SRA = 1, SRB = 0
 Etapa EX: Ins = BEQ, OS1 = 0, OS2 = 00, OP = 0001, BranchType = 001, WriteCond = 00, RF_LE = 0, MemToReg = 0, RW = 0, E = 0, Size = 00, SE = 0, L = 0, OutSel = 0
-Etapa MEM: Ins = EZAL, RF_LE = 1, MemToReg = 1, RW = 0, E = 0, Size = 00, SE = 0
+Etapa MEM: Ins = BGEZAL, RF_LE = 1, MemToReg = 1, RW = 0, E = 0, Size = 00, SE = 0
 Etapa WB: Ins = MOVZ, RF_LE = 1
 
 Etapa IF: Ins = JAL, PC = 52, t = 54ns
 Etapa ID: Ins = BGTZ Jump = 0, RegDest = 00, OS1 = 0, OS2 = 00, OP = 0111, BranchType = 011, WriteCond = 00, RF_LE = 0, MemToReg = 0, RW = 0, E = 0, Size = 00, SE = 0, L = 0, OutSel = 0, SRA = 1, SRB = 0
-Etapa EX: Ins = EZAL, OS1 = 0, OS2 = 00, OP = 0111, BranchType = 010, WriteCond = 11, RF_LE = 1, MemToReg = 1, RW = 0, E = 0, Size = 00, SE = 0, L = 0, OutSel = 1
+Etapa EX: Ins = BGEZAL, OS1 = 0, OS2 = 00, OP = 0111, BranchType = 010, WriteCond = 11, RF_LE = 1, MemToReg = 1, RW = 0, E = 0, Size = 00, SE = 0, L = 0, OutSel = 1
 Etapa MEM: Ins = BEQ, RF_LE = 0, MemToReg = 0, RW = 0, E = 0, Size = 00, SE = 0
-Etapa WB: Ins = EZAL, RF_LE = 1
+Etapa WB: Ins = BGEZAL, RF_LE = 1
 
 Etapa IF: Ins = JR, PC = 56, t = 58ns
 Etapa ID: Ins = JAL Jump = 1, RegDest = 10, OS1 = 0, OS2 = 00, OP = 0000, BranchType = 000, WriteCond = 00, RF_LE = 1, MemToReg = 1, RW = 0, E = 0, Size = 00, SE = 0, L = 0, OutSel = 1, SRA = 0, SRB = 0
 Etapa EX: Ins = BGTZ, OS1 = 0, OS2 = 00, OP = 0111, BranchType = 011, WriteCond = 00, RF_LE = 0, MemToReg = 0, RW = 0, E = 0, Size = 00, SE = 0, L = 0, OutSel = 0
-Etapa MEM: Ins = EZAL, RF_LE = 1, MemToReg = 1, RW = 0, E = 0, Size = 00, SE = 0
+Etapa MEM: Ins = BGEZAL, RF_LE = 1, MemToReg = 1, RW = 0, E = 0, Size = 00, SE = 0
 Etapa WB: Ins = BEQ, RF_LE = 0
 
 Etapa IF: Ins = LUI, PC = 60, t = 62ns
 Etapa ID: Ins = JR Jump = 1, RegDest = 00, OS1 = 0, OS2 = 00, OP = 1111, BranchType = 000, WriteCond = 00, RF_LE = 0, MemToReg = 0, RW = 0, E = 0, Size = 00, SE = 0, L = 0, OutSel = 0, SRA = 1, SRB = 0
 Etapa EX: Ins = JAL, OS1 = 0, OS2 = 00, OP = 0000, BranchType = 000, WriteCond = 00, RF_LE = 1, MemToReg = 1, RW = 0, E = 0, Size = 00, SE = 0, L = 0, OutSel = 1
 Etapa MEM: Ins = BGTZ, RF_LE = 0, MemToReg = 0, RW = 0, E = 0, Size = 00, SE = 0
-Etapa WB: Ins = EZAL, RF_LE = 1
+Etapa WB: Ins = BGEZAL, RF_LE = 1
 
 Etapa IF: Ins = NOP, PC = 64, t = 66ns
 Etapa ID: Ins = LUI Jump = 0, RegDest = 00, OS1 = 0, OS2 = 10, OP = 1000, BranchType = 000, WriteCond = 00, RF_LE = 1, MemToReg = 1, RW = 0, E = 0, Size = 00, SE = 0, L = 0, OutSel = 0, SRA = 0, SRB = 0
@@ -109,20 +109,20 @@ Etapa WB: Ins = JAL, RF_LE = 1
 
 Etapa IF: Ins = LBU, PC = 72, t = 74ns
 Etapa ID: Ins = SUB Jump = 0, RegDest = 01, OS1 = 0, OS2 = 00, OP = 0001, BranchType = 000, WriteCond = 00, RF_LE = 1, MemToReg = 1, RW = 0, E = 0, Size = 00, SE = 0, L = 0, OutSel = 0, SRA = 1, SRB = 1
-Etapa EX: Ins = NOP, OS1 = 0, OS2 = 00, OP = 0000, BranchType = 000, WriteCond = 00, RF_LE = 0, MemToReg = 0, RW = 0, E = 0, Size = 00, SE = 0, L = 0, OutSel = 0
+Etapa EX: Ins = Bubble, OS1 = 0, OS2 = 00, OP = 0000, BranchType = 000, WriteCond = 00, RF_LE = 0, MemToReg = 0, RW = 0, E = 0, Size = 00, SE = 0, L = 0, OutSel = 0
 Etapa MEM: Ins = LUI, RF_LE = 1, MemToReg = 1, RW = 0, E = 0, Size = 00, SE = 0
 Etapa WB: Ins = JR, RF_LE = 0
 
 Etapa IF: Ins = LH, PC = 76, t = 78ns
 Etapa ID: Ins = LBU Jump = 0, RegDest = 00, OS1 = 0, OS2 = 01, OP = 0000, BranchType = 000, WriteCond = 00, RF_LE = 1, MemToReg = 0, RW = 0, E = 0, Size = 00, SE = 0, L = 1, OutSel = 0, SRA = 1, SRB = 0
-Etapa EX: Ins = SUB, OS1 = 0, OS2 = 00, OP = 0001, BranchType = 000, WriteCond = 00, RF_LE = 1, MemToReg = 1, RW = 0, E = 0, Size = 00, SE = 0, L = 0, OutSel = 0
-Etapa MEM: Ins = NOP, RF_LE = 0, MemToReg = 0, RW = 0, E = 0, Size = 00, SE = 0
+Etapa EX: Ins = Bubble, OS1 = 0, OS2 = 00, OP = 0000, BranchType = 000, WriteCond = 00, RF_LE = 0, MemToReg = 0, RW = 0, E = 0, Size = 00, SE = 0, L = 0, OutSel = 0
+Etapa MEM: Ins = Bubble, RF_LE = 0, MemToReg = 0, RW = 0, E = 0, Size = 00, SE = 0
 Etapa WB: Ins = LUI, RF_LE = 1
 
 Etapa IF: Ins = SW, PC = 80, t = 82ns
 Etapa ID: Ins = LH Jump = 0, RegDest = 00, OS1 = 0, OS2 = 01, OP = 0000, BranchType = 000, WriteCond = 00, RF_LE = 1, MemToReg = 0, RW = 0, E = 0, Size = 01, SE = 1, L = 1, OutSel = 0, SRA = 1, SRB = 0
-Etapa EX: Ins = LBU, OS1 = 0, OS2 = 01, OP = 0000, BranchType = 000, WriteCond = 00, RF_LE = 1, MemToReg = 0, RW = 0, E = 0, Size = 00, SE = 0, L = 1, OutSel = 0
-Etapa MEM: Ins = SUB, RF_LE = 1, MemToReg = 1, RW = 0, E = 0, Size = 00, SE = 0
-Etapa WB: Ins = NOP, RF_LE = 0
+Etapa EX: Ins = Bubble, OS1 = 0, OS2 = 00, OP = 0000, BranchType = 000, WriteCond = 00, RF_LE = 0, MemToReg = 0, RW = 0, E = 0, Size = 00, SE = 0, L = 0, OutSel = 0
+Etapa MEM: Ins = Bubble, RF_LE = 0, MemToReg = 0, RW = 0, E = 0, Size = 00, SE = 0
+Etapa WB: Ins = Bubble, RF_LE = 0
 
-C:\Users\jonat\OneDrive\Documents\UPRM\Fall 2026\ICOM4215\MIPS-Architecture\MIPS_top_tb.v:45: $finish called at 84000 (1ps)
+C:\Users\jonat\OneDrive\Documents\UPRM\Fall 2026\ICOM4215\MIPS-Architecture\MIPS_top_tb.v:46: $finish called at 84000 (1ps)
