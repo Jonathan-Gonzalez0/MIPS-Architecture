@@ -27,6 +27,9 @@ module MIPS_top(
   wire SRA_ID;
   wire SRB_ID;
 
+  wire[31:0] PA_RF_FWD_ID;
+  wire[31:0] PB_RF_FWD_ID;
+
   OR_Jump_Branch OR_J_B(
     //  Input OR for Branch and Jump
     .A (Branch_Control_ex),
@@ -68,7 +71,19 @@ module MIPS_top(
     .I(Instruction_Memory)
   );
 
-  
+  register_file RF(
+    //Inputs
+    .Clk(Clk),
+    .LE(RF_LE_wb),
+    .RW(RW_wb),
+    .RA(Instruction[25:21]),
+    .RB(Instruction[20:16]),
+    .PW(PW_wb),
+
+    //Outputs
+    .PA(PA_RF_FWD_ID),
+    .PB(PB_RF_FWD_ID)
+  );
   
   ControlUnit CU(
     //Input
@@ -249,6 +264,9 @@ module MIPS_top(
 
   wire RF_LE_wb;
 
+  wire[4:0] RW_wb;
+  wire[31:0] PW_wb;
+
   MEMWB mem_wb(
     .Clk(Clk),
     .Reset(Reset),
@@ -258,7 +276,7 @@ module MIPS_top(
     .RF_LE_in(RF_LE_mem),
 
     .PW_out(),
-    .RW_out(),
+    .RW_out(RW_wb),
     .RF_LE_out(RF_LE_wb)
   );
 
