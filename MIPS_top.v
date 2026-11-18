@@ -7,6 +7,7 @@ module MIPS_top(
   wire[31:0] program_counter;
   wire[31:0] Instruction;
   wire[31:0] target_address;
+  wire J;
   wire Jump_ID;
   wire [1:0] RegDst_ID;
   wire OS1_ID;
@@ -25,12 +26,21 @@ module MIPS_top(
   wire SRA_ID;
   wire SRB_ID;
 
+  OR_Jump_Branch OR_J_B(
+    //  Input OR for Branch and Jump
+    .A (Branch_Control_ex),
+    .B (Jump_ID),
+
+    // Output OR for Branch and Jump
+    .Out(J)
+  );
+
   PASG_System PASG(
     //Input de las Señales
     .Reset(Reset),
     .LE(1'b1),
     .Clk(Clk),
-    .J(1'b0),
+    .J(J),
     .Clr(1'b0),
     .TAI(32'b0),
     .RS(32'b0),
@@ -121,6 +131,7 @@ module MIPS_top(
     .OutSel_out(OutSel_mux)
   );
 
+  wire Branch_Control_ex;
   wire OS1_ex;
   wire[1:0] OS2_ex;
   wire[3:0] OP_ex;
