@@ -7,6 +7,7 @@ module MIPS_top(
   wire[31:0] program_counter;
   wire[31:0] Instruction;
   wire[31:0] target_address;
+  wire[31:0] TAI;
   wire J;
   wire Jump_ID;
   wire [1:0] RegDst_ID;
@@ -35,6 +36,16 @@ module MIPS_top(
     .Out(J)
   );
 
+  J_Branch_Mux J_B_M(
+    // Input
+    .S(Branch_Control_ex),
+    .A(TA_ex),
+    .B(target_address),
+
+    // Output
+    .O(TAI)
+  );
+
   PASG_System PASG(
     //Input de las Señales
     .Reset(Reset),
@@ -57,6 +68,8 @@ module MIPS_top(
     .I(Instruction_Memory)
   );
 
+  
+  
   ControlUnit CU(
     //Input
     .I(Instruction),
@@ -147,6 +160,9 @@ module MIPS_top(
   wire OutSel_ex;
   wire SRA_ex;
   wire SRB_ex;
+  wire BranchTaken_ex;
+
+  wire[31:0] TA_ex;
 
   IDEX id_ex(
     .Clk(Clk),
@@ -175,7 +191,7 @@ module MIPS_top(
     .OutSel_in(OutSel_mux),
 
     .PC8_out(),
-    .TA_out(),
+    .TA_out(TA_ex),
     .PA_out(),
     .PB_out(),
     .SA_out(),
