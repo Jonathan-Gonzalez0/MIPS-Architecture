@@ -4,7 +4,6 @@ module PASG_System(
   input wire Clk,
   input wire J,
   input wire Clr, 
-  input wire[31:0] TAI,
   input wire[31:0] RS,
   input wire[31:0] Ins,
 

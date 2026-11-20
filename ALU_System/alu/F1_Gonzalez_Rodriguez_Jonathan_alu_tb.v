@@ -8,7 +8,7 @@ module alu_tb;
   wire GT;
   wire [31:0] Out;
 
-  alu du
+  alu dut(
     .A (A),
     .B (B),
     .OP (OP),

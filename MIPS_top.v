@@ -36,8 +36,10 @@ module MIPS_top(
   wire SRA_ID;
   wire SRB_ID;
 
-  wire[31:0] PA_RF_FWD_ID;
+  wire[31:0] PA_RF_FWD_ID; //RF to FWD 
   wire[31:0] PB_RF_FWD_ID;
+
+  wire[31:0] FWD_A_Output;
 
   OR_Jump_Branch OR_J_B(
     //  Input OR for Branch and Jump
@@ -61,12 +63,11 @@ module MIPS_top(
   PASG_System PASG(
     //Input de las Señales
     .Reset(Reset),
-    .LE(1'b1),
+    .LE(LE_PASG),
     .Clk(Clk),
     .J(J),
     .Clr(1'b0),
-    .TAI(32'b0),
-    .RS(32'b0),
+    .RS(FWD_A_Output),
     .Ins(Instruction_Memory),
 
     //Output de las señales
@@ -145,6 +146,15 @@ module MIPS_top(
     .rd(Instruction[15:11]),
     .r31(5'd31),
     .r0(5'd0)
+  );
+
+  FWD_A fwd_A(
+    .RF(PA_RF_FWD_ID),
+    .R_EX(Output_MUX),
+    .R_MEM(PW_in),
+    .R_WB(PW_Out),
+    .S(FWD_A_S_ID),
+    .Out(FWD_A_Output)
   );
 
   wire S_mux;
@@ -274,6 +284,7 @@ module MIPS_top(
 
   // Output Signals
   wire[4:0] RD_mem;
+  wire[31:0] Output_MUX;
 
   // Control Signals
   wire RF_LE_mem;
@@ -287,7 +298,7 @@ module MIPS_top(
     .Clk(Clk),
     .Reset(Reset),
 
-    .ALU_in(32'b0),
+    .ALU_in(Output_MUX),
     .SD_in(32'b0),
     .RD_in(5'b0),
 
@@ -311,6 +322,8 @@ module MIPS_top(
   );
   // Output signals
   wire[4:0] RD_wb;
+  wire[31:0] PW_in;
+  wire[31:0] PW_Out;
 
   //Control Signals
   wire RF_LE_wb;
@@ -321,12 +334,12 @@ module MIPS_top(
   MEMWB mem_wb(
     .Clk(Clk),
     .Reset(Reset),
-    .PW_in(32'b0),
+    .PW_in(PW_in),
     .RW_in(5'b0),
 
     .RF_LE_in(RF_LE_mem),
 
-    .PW_out(),
+    .PW_out(PW_Out),
     .RW_out(RW_wb),
     .RF_LE_out(RF_LE_wb)
   );
