@@ -1,20 +1,20 @@
 module DHDU(
-  input wire[4:0] ID_RA,
-  input wire[4:0] ID_RB,
-  input wire SRA,
-  input wire SRB,
-  input wire[4:0] EX_RD,
-  input wire[4:0] MEM_RD,
-  input wire[4:0] WB_RD,
-  input wire EX_RF_LE,
-  input wire MEM_RF_LE,
-  input wire WB_RF_LE,
-  input wire EX_L,
+    input wire[4:0] ID_RA,
+    input wire[4:0] ID_RB,
+    input wire SRA,
+    input wire SRB,
+    input wire[4:0] EX_RD,
+    input wire[4:0] MEM_RD,
+    input wire[4:0] WB_RD,
+    input wire EX_RF_LE,
+    input wire MEM_RF_LE,
+    input wire WB_RF_LE,
+    input wire EX_L,
 
-  output reg[1:0] A,
-  output reg[1:0] B,
-  output reg LE,
-  output reg NOP
+    output reg[1:0] A,
+    output reg[1:0] B,
+    output reg LE,
+    output reg NOP
 );
 
 always@(*) begin

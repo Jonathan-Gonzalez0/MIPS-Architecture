@@ -140,6 +140,13 @@ module MIPS_top(
     .NOP(S)
   );
 
+  Write_Register WR(
+    .rt(Instruction[20:16]),
+    .rd(Instruction[15:11]),
+    .r31(5'd31),
+    .r0(5'd0)
+  );
+
   wire S_mux;
   wire OS1_mux;
   wire[1:0] OS2_mux;
