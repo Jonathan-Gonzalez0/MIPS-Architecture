@@ -1,13 +1,22 @@
 module MIPS_top(
   input wire Clk,
   input wire Reset,
-  input wire S
-);
+  );
+  
+  // Inside Signals
   wire[31:0] Instruction_Memory;
   wire[31:0] program_counter;
   wire[31:0] Instruction;
   wire[31:0] target_address;
   wire[31:0] TAI;
+
+  //DHDU Signals
+  wire FWD_A_S_ID;
+  wire FED_B_S_ID;
+  wire LE_PASG;
+  wire S;
+  
+  // Control Signals
   wire J;
   wire Jump_ID;
   wire [1:0] RegDst_ID;
@@ -109,6 +118,28 @@ module MIPS_top(
     .SRB(SRB_ID)
   );
 
+  DHDU dhdu(
+
+    // Input Signals
+    .ID_RA(Instruction[25:21]),
+    .ID_RB(Instruction[20:16]),
+    .SRA(SRA_ID),
+    .SRB(SRB_ID),
+    .EX_RD(RD_EX),
+    .MEM_RD(RD_mem),
+    .WB_RD(RD_wb),
+    .EX_RF_LE(RF_LE_ex),
+    .MEM_RF_LE(RF_LE_mem),
+    .WB_RF_LE(RF_LE_wb),
+    .EX_L(L_ex),
+
+    // Output Signals
+    .A(FWD_A_S_ID),
+    .B(FWD_B_S_ID),
+    .LE(LE_PASG),
+    .NOP(S)
+  );
+
   wire S_mux;
   wire OS1_mux;
   wire[1:0] OS2_mux;
@@ -158,7 +189,11 @@ module MIPS_top(
     .L_out(L_mux),
     .OutSel_out(OutSel_mux)
   );
+  
+  // Information Signals
+  wire[4:0] RD_EX;
 
+  //Control Signals
   wire Branch_Control_ex;
   wire OS1_ex;
   wire[1:0] OS2_ex;
@@ -205,14 +240,16 @@ module MIPS_top(
     .L_in(L_mux),
     .OutSel_in(OutSel_mux),
 
+    // Output Signals
     .PC8_out(),
     .TA_out(TA_ex),
     .PA_out(),
     .PB_out(),
     .SA_out(),
     .I_out(),
-    .RD_out(),
+    .RD_out(RD_EX),
 
+    // Control Signals
     .OS1_out(OS1_ex),
     .OS2_out(OS2_ex),
     .OP_out(OP_ex),
@@ -228,6 +265,10 @@ module MIPS_top(
     .OutSel_out(OutSel_ex)
   );
 
+  // Output Signals
+  wire[4:0] RD_mem;
+
+  // Control Signals
   wire RF_LE_mem;
   wire MemToReg_mem;
   wire RW_mem;
@@ -252,7 +293,7 @@ module MIPS_top(
 
     .ALU_out(),
     .SD_out(),
-    .RD_out(),
+    .RD_out(RD_mem),
 
     .RF_LE_out(RF_LE_mem),
     .RW_out(RW_mem),
@@ -261,7 +302,10 @@ module MIPS_top(
     .SE_out(SE_mem),
     .MemToReg_out(MemToReg_mem)
   );
+  // Output signals
+  wire[4:0] RD_wb;
 
+  //Control Signals
   wire RF_LE_wb;
 
   wire[4:0] RW_wb;
