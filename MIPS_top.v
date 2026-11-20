@@ -12,7 +12,7 @@ module MIPS_top(
 
   //DHDU Signals
   wire FWD_A_S_ID;
-  wire FED_B_S_ID;
+  wire FWD_B_S_ID;
   wire LE_PASG;
   wire S;
   
@@ -40,6 +40,7 @@ module MIPS_top(
   wire[31:0] PB_RF_FWD_ID;
 
   wire[31:0] FWD_A_Output;
+  wire[31:0] FWD_B_Output;
 
   OR_Jump_Branch OR_J_B(
     //  Input OR for Branch and Jump
@@ -149,12 +150,31 @@ module MIPS_top(
   );
 
   FWD_A fwd_A(
+    // Input Signals
     .RF(PA_RF_FWD_ID),
     .R_EX(Output_MUX),
     .R_MEM(PW_in),
     .R_WB(PW_Out),
     .S(FWD_A_S_ID),
+
+    // Output Signals
     .Out(FWD_A_Output)
+  );
+
+  FWD_B fwd_B(
+    // Input Signals
+    .RF(PB_RF_FWD_ID),
+    .R_EX(Output_MUX),
+    .R_MEM(PW_in),
+    .R_WB(PW_Out),
+    .S(FWD_B_S_ID),
+
+    // Output Signals
+    .Out(FWD_B_Output)
+  );
+
+  Adder_8 add8(
+    .PC(PASG.Q0)
   );
 
   wire S_mux;
