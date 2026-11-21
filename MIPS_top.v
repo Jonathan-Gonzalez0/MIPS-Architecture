@@ -241,6 +241,7 @@ module MIPS_top(
   wire Not_NZ_ex;
   wire BranchTaken_ex;
   wire Enable_A_ex;
+  wire RF_LE_AND_ex;
 
   //Control Signals
   wire Branch_Control_ex;
@@ -381,7 +382,14 @@ module MIPS_top(
     .Out(Enable_A_ex)
   );
 
-  
+  Enable_AND EAND(
+    // Input
+    .A(Enable_A_ex),
+    .B(RF_LE_ex),
+
+    // Output
+    .Out(RF_LE_AND_ex)
+  );
 
   EXMEM ex_mem(
     .Clk(Clk),
@@ -391,7 +399,7 @@ module MIPS_top(
     .SD_in(32'b0),
     .RD_in(5'b0),
 
-    .RF_LE_in(RF_LE_ex),
+    .RF_LE_in(RF_LE_AND_ex),
     .RW_in(RW_ex),
     .E_in(E_ex),
     .Size_in(Size_ex),
