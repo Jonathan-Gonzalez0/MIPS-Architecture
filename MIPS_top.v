@@ -240,6 +240,7 @@ module MIPS_top(
   wire NZ_ex;
   wire Not_NZ_ex;
   wire BranchTaken_ex;
+  wire Enable_A_ex;
 
   //Control Signals
   wire Branch_Control_ex;
@@ -359,13 +360,28 @@ module MIPS_top(
   );
 
   Branch_Control_Unit BCU(
+    // Input
     .LE(LE_ex),
     .EQ(EQ_ex),
     .GT(GT_ex),
     .BranchType(BranchType_ex),
 
+    // Output 
     .BranchTaken(BranchTaken_ex)
   );
+
+  Write_Condition_Mux WCM(
+    // Input
+    .one(1'b1),
+    .not_zero(NZ_ex),
+    .zero(Not_NZ_ex),
+    .BranchTaken(BranchTaken_ex),
+
+    // Output
+    .Out(Enable_A_ex)
+  );
+
+  
 
   EXMEM ex_mem(
     .Clk(Clk),
