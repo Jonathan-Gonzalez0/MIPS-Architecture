@@ -242,6 +242,8 @@ module MIPS_top(
   wire BranchTaken_ex;
   wire Enable_A_ex;
   wire RF_LE_AND_ex;
+  wire [31:0] PC_8_out_ex;
+  wire [31:0] Output_Mux_ex;
 
   //Control Signals
   wire Branch_Control_ex;
@@ -290,7 +292,7 @@ module MIPS_top(
     .OutSel_in(OutSel_mux),
 
     // Output Signals
-    .PC8_out(),
+    .PC8_out(PC_8_out_ex),
     .TA_out(TA_ex),
     .PA_out(PA_ex),
     .PB_out(PB_ex),
@@ -389,6 +391,16 @@ module MIPS_top(
 
     // Output
     .Out(RF_LE_AND_ex)
+  );
+
+  EX_Output_Mux EOM(
+    // Input Signal
+    .PC(PC_8_out_ex),
+    .ALU(ALU_out_ex),
+    .S(OutSel_ex),
+
+    // Output Signal
+    .O(Output_MUX_ex)
   );
 
   EXMEM ex_mem(
