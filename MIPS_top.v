@@ -243,7 +243,6 @@ module MIPS_top(
   wire Enable_A_ex;
   wire RF_LE_AND_ex;
   wire [31:0] PC_8_out_ex;
-  wire [31:0] Output_Mux_ex;
 
   //Control Signals
   wire Branch_Control_ex;
