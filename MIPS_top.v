@@ -152,7 +152,7 @@ module MIPS_top(
   FWD_A fwd_A(
     // Input Signals
     .RF(PA_RF_FWD_ID),
-    .R_EX(Output_MUX),
+    .R_EX(Output_MUX_ex),
     .R_MEM(PW_in),
     .R_WB(PW_Out),
     .S(FWD_A_S_ID),
@@ -164,7 +164,7 @@ module MIPS_top(
   FWD_B fwd_B(
     // Input Signals
     .RF(PB_RF_FWD_ID),
-    .R_EX(Output_MUX),
+    .R_EX(Output_MUX_ex),
     .R_MEM(PW_in),
     .R_WB(PW_Out),
     .S(FWD_B_S_ID),
@@ -227,8 +227,16 @@ module MIPS_top(
     .OutSel_out(OutSel_mux)
   );
   
-  // Information Signals
+  // Output Signals
   wire[4:0] RD_EX;
+  wire[31:0] PA_ex;
+  wire[4:0] SA_ex;
+  wire[31:0] PB_ex;
+  wire LE_ex;
+  wire EQ_ex;
+  wire GT_ex;
+  wire[31:0] ALU_out_ex;
+  wire[31:0] Output_MUX_ex;
 
   //Control Signals
   wire Branch_Control_ex;
@@ -280,9 +288,9 @@ module MIPS_top(
     // Output Signals
     .PC8_out(),
     .TA_out(TA_ex),
-    .PA_out(),
-    .PB_out(),
-    .SA_out(),
+    .PA_out(PA_ex),
+    .PB_out(PB_ex),
+    .SA_out(SA_ex),
     .I_out(),
     .RD_out(RD_EX),
 
@@ -304,7 +312,6 @@ module MIPS_top(
 
   // Output Signals
   wire[4:0] RD_mem;
-  wire[31:0] Output_MUX;
 
   // Control Signals
   wire RF_LE_mem;
@@ -314,11 +321,29 @@ module MIPS_top(
   wire[1:0] Size_mem;
   wire SE_mem;
 
+  alu_system ALU(
+    // Input Signals
+    .RA(PA_ex),
+    .SA(SA_ex),
+    .OS1(OS1_ex),
+    .RB(PB_ex),
+    .I(Instruction[15:0]),
+    .OS2(OS2_ex),
+    .OP(OP_ex),
+
+
+    //  Output Signals
+    .LE(LE_ex),
+    .EQ(EQ_ex),
+    .GT(GT_ex),
+    .Out(ALU_out_ex)
+  );
+
   EXMEM ex_mem(
     .Clk(Clk),
     .Reset(Reset),
 
-    .ALU_in(Output_MUX),
+    .ALU_in(Output_MUX_ex),
     .SD_in(32'b0),
     .RD_in(5'b0),
 
