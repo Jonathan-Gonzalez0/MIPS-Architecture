@@ -237,6 +237,8 @@ module MIPS_top(
   wire GT_ex;
   wire[31:0] ALU_out_ex;
   wire[31:0] Output_MUX_ex;
+  wire NZ_ex;
+  wire Not_NZ_ex;
 
   //Control Signals
   wire Branch_Control_ex;
@@ -338,6 +340,23 @@ module MIPS_top(
     .GT(GT_ex),
     .Out(ALU_out_ex)
   );
+
+  B_not_equal_zero BnotZ(
+    // Input signals
+    .OB(alu_system.B),
+
+    // Output signals
+    .NZ(NZ_ex)
+  );
+
+  Not_NZ NNZ(
+
+    // Input Signal
+    .NZ(NZ_ex),
+
+    // Output Signal
+    .not_NZ(Not_NZ)
+  )
 
   EXMEM ex_mem(
     .Clk(Clk),
