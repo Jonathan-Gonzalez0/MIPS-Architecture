@@ -6,6 +6,7 @@ module PASG_System(
   input wire Clr, 
   input wire[31:0] RS,
   input wire[31:0] Ins,
+  input wire[31:0] TAI,
 
   output wire[31:0] PC,
   output wire[31:0] I,

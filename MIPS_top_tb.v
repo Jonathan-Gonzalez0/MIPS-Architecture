@@ -6,11 +6,11 @@ module MIPS_top_tb;
     reg Clk;
     reg Reset;
     reg S;
+    reg Show_Controls = 1'b0;
     
     MIPS_top mips_top (
       .Clk(Clk),
-      .Reset(Reset),
-      .S(S)
+      .Reset(Reset)
       );
       
     reg[8*6-1:0] Instruction_Name;
@@ -20,6 +20,13 @@ module MIPS_top_tb;
     wire[31:0] PC_ID = mips_top.PASG.Q0; 
     wire[31:0] INS_ID = mips_top.PASG.I;
 
+    wire signed [31:0] r2  = mips_top.RF.MUX_A.Q2;
+    wire signed [31:0] r5  = mips_top.RF.MUX_A.Q5;
+    wire signed [31:0] r6  = mips_top.RF.MUX_A.Q6;
+    wire signed [31:0] r16 = mips_top.RF.MUX_A.Q16;
+    wire signed [31:0] r17 = mips_top.RF.MUX_A.Q17;
+    wire signed [31:0] r18 = mips_top.RF.MUX_A.Q18;
+
     reg[8*6-1:0] Instruction_Name_EX;
 
     reg[8*6-1:0] Instruction_Name_MEM;
@@ -28,9 +35,15 @@ module MIPS_top_tb;
 
   initial begin
     $readmemb(
-      "Instruction Memory/test_instructions_memory.txt",
+      "Instruction Memory/Validation_Code.txt",
       mips_top.IM.Mem,
-      0, 99
+      0, 79
+    );
+
+    $readmemb(
+      "Data_Memory/Validation_Code.txt",
+      mips_top.DM.Mem,
+      0, 79
     );
     fork
       $timeformat(-9, 0, "ns", 0);
@@ -40,10 +53,9 @@ module MIPS_top_tb;
 
       #3 Reset = 1'b0;
 
-      #72 S = 1'b1;
+      #88 $display("t = %0t, Word = %b",$time, {mips_top.DM.Mem[76],mips_top.DM.Mem[77],mips_top.DM.Mem[78],mips_top.DM.Mem[79]});
       
-      #84
-      $finish;
+      #92 $finish;
     join 
   end
   
@@ -187,6 +199,12 @@ module MIPS_top_tb;
       endcase
   end
 
+  initial begin
+    #2
+    $monitor("t=%0t PC=%0d r2=%0d r5=%0d r6=%0d r16=%0d r17=%0d r18=%0d",
+             $time, PC_IF, r2, r5, r6, r16, r17, r18);
+  end
+
   always @(posedge Clk) begin
     if(Reset)
       begin
@@ -204,12 +222,14 @@ module MIPS_top_tb;
         Instruction_Name_MEM <= Instruction_Name_EX;
         Instruction_Name_WB <= Instruction_Name_MEM;
       end
-      $strobe("Etapa IF: Ins = %0s, PC = %0d, t = %0t",Instruction_Name, PC_IF, $time);
-      $strobe("Etapa ID: Ins = %0s, Jump = %b, RegDest = %b, OS1 = %b, OS2 = %b, OP = %b, BranchType = %b, WriteCond = %b, RF_LE = %b, MemToReg = %b, RW = %b, E = %b, Size = %b, SE = %b, L = %b, OutSel = %b, SRA = %b, SRB = %b",Instruction_Name_ID, mips_top.Jump_ID, mips_top.RegDst_ID, mips_top.OS1_ID, mips_top.OS2_ID, mips_top.OP_ID, mips_top.BranchType_ID, mips_top.WriteCond_ID, mips_top.RF_LE_ID,mips_top.MemToReg_ID, mips_top.RW_ID, mips_top.E_ID, mips_top.Size_ID, mips_top.SE_ID, mips_top.L_ID, mips_top.OutSel_ID, mips_top.SRA_ID, mips_top.SRB_ID);
-      $strobe("Etapa EX: Ins = %0s, OS1 = %b, OS2 = %b, OP = %b, BranchType = %b, WriteCond = %b, RF_LE = %b, MemToReg = %b, RW = %b, E = %b, Size = %b, SE = %b, L = %b, OutSel = %b", Instruction_Name_EX, mips_top.OS1_ex, mips_top.OS2_ex, mips_top.OP_ex, mips_top.BranchType_ex, mips_top.WriteCond_ex, mips_top.RF_LE_ex,mips_top.MemToReg_ex, mips_top.RW_ex, mips_top.E_ex, mips_top.Size_ex, mips_top.SE_ex, mips_top.L_ex, mips_top.OutSel_ex);
-      $strobe("Etapa MEM: Ins = %0s, RF_LE = %b, MemToReg = %b, RW = %b, E = %b, Size = %b, SE = %b",Instruction_Name_MEM, mips_top.RF_LE_mem, mips_top.MemToReg_mem, mips_top.RW_mem, mips_top.E_mem, mips_top.Size_mem, mips_top.SE_mem);
-      $strobe("Etapa WB: Ins = %0s, RF_LE = %b",Instruction_Name_WB, mips_top.RF_LE_wb);
-      $strobe("");
+      if(Show_Controls) begin
+        $strobe("Etapa IF: Ins = %0s, PC = %0d, t = %0t",Instruction_Name, PC_IF, $time);
+        $strobe("Etapa ID: Ins = %0s, Jump = %b, RegDest = %b, OS1 = %b, OS2 = %b, OP = %b, BranchType = %b, WriteCond = %b, RF_LE = %b, MemToReg = %b, RW = %b, E = %b, Size = %b, SE = %b, L = %b, OutSel = %b, SRA = %b, SRB = %b",Instruction_Name_ID, mips_top.Jump_ID, mips_top.RegDst_ID, mips_top.OS1_ID, mips_top.OS2_ID, mips_top.OP_ID, mips_top.BranchType_ID, mips_top.WriteCond_ID, mips_top.RF_LE_ID,mips_top.MemToReg_ID, mips_top.RW_ID, mips_top.E_ID, mips_top.Size_ID, mips_top.SE_ID, mips_top.L_ID, mips_top.OutSel_ID, mips_top.SRA_ID, mips_top.SRB_ID);
+        $strobe("Etapa EX: Ins = %0s, OS1 = %b, OS2 = %b, OP = %b, BranchType = %b, WriteCond = %b, RF_LE = %b, MemToReg = %b, RW = %b, E = %b, Size = %b, SE = %b, L = %b, OutSel = %b", Instruction_Name_EX, mips_top.OS1_ex, mips_top.OS2_ex, mips_top.OP_ex, mips_top.BranchType_ex, mips_top.WriteCond_ex, mips_top.RF_LE_ex,mips_top.MemToReg_ex, mips_top.RW_ex, mips_top.E_ex, mips_top.Size_ex, mips_top.SE_ex, mips_top.L_ex, mips_top.OutSel_ex);
+        $strobe("Etapa MEM: Ins = %0s, RF_LE = %b, MemToReg = %b, RW = %b, E = %b, Size = %b, SE = %b",Instruction_Name_MEM, mips_top.RF_LE_mem, mips_top.MemToReg_mem, mips_top.RW_mem, mips_top.E_mem, mips_top.Size_mem, mips_top.SE_mem);
+        $strobe("Etapa WB: Ins = %0s, RF_LE = %b",Instruction_Name_WB, mips_top.RF_LE_wb);
+        $strobe("");
+      end
   end
 
 endmodule

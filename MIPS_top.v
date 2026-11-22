@@ -1,6 +1,6 @@
 module MIPS_top(
   input wire Clk,
-  input wire Reset,
+  input wire Reset
   );
   
   // Inside Signals
@@ -11,8 +11,8 @@ module MIPS_top(
   wire[31:0] TAI;
 
   //DHDU Signals
-  wire FWD_A_S_ID;
-  wire FWD_B_S_ID;
+  wire[1:0] FWD_A_S_ID;
+  wire[1:0] FWD_B_S_ID;
   wire LE_PASG;
   wire S;
   
@@ -35,6 +35,7 @@ module MIPS_top(
   wire OutSel_ID;
   wire SRA_ID;
   wire SRB_ID;
+  wire[4:0] Write_Register_Out_ID;
 
   wire[31:0] PA_RF_FWD_ID; //RF to FWD 
   wire[31:0] PB_RF_FWD_ID;
@@ -44,7 +45,7 @@ module MIPS_top(
 
   OR_Jump_Branch OR_J_B(
     //  Input OR for Branch and Jump
-    .A (Branch_Control_ex),
+    .A (BranchTaken_ex),
     .B (Jump_ID),
 
     // Output OR for Branch and Jump
@@ -53,7 +54,7 @@ module MIPS_top(
 
   J_Branch_Mux J_B_M(
     // Input
-    .S(Branch_Control_ex),
+    .S(BranchTaken_ex),
     .A(TA_ex),
     .B(target_address),
 
@@ -67,9 +68,10 @@ module MIPS_top(
     .LE(LE_PASG),
     .Clk(Clk),
     .J(J),
-    .Clr(1'b0),
+    .Clr(BranchTaken_ex),
     .RS(FWD_A_Output),
     .Ins(Instruction_Memory),
+    .TAI(TAI),
 
     //Output de las señales
     .PC(program_counter),
@@ -84,12 +86,12 @@ module MIPS_top(
 
   register_file RF(
     //Inputs
-    .Clk(Clk),
+    .CLK(Clk),
     .LE(RF_LE_wb),
     .RW(RW_wb),
     .RA(Instruction[25:21]),
     .RB(Instruction[20:16]),
-    .PW(PW_wb),
+    .PW(PW_Out),
 
     //Outputs
     .PA(PA_RF_FWD_ID),
@@ -129,8 +131,8 @@ module MIPS_top(
     .SRB(SRB_ID),
     .EX_RD(RD_EX),
     .MEM_RD(RD_mem),
-    .WB_RD(RD_wb),
-    .EX_RF_LE(RF_LE_ex),
+    .WB_RD(RW_wb),
+    .EX_RF_LE(RF_LE_AND_ex),
     .MEM_RF_LE(RF_LE_mem),
     .WB_RF_LE(RF_LE_wb),
     .EX_L(L_ex),
@@ -146,14 +148,17 @@ module MIPS_top(
     .rt(Instruction[20:16]),
     .rd(Instruction[15:11]),
     .r31(5'd31),
-    .r0(5'd0)
+    .r0(5'd0),
+    .S(RegDst_ID),
+
+    .Out(Write_Register_Out_ID)
   );
 
   FWD_A fwd_A(
     // Input Signals
     .RF(PA_RF_FWD_ID),
     .R_EX(Output_MUX_ex),
-    .R_MEM(PW_in),
+    .R_MEM(PW_mem),
     .R_WB(PW_Out),
     .S(FWD_A_S_ID),
 
@@ -165,7 +170,7 @@ module MIPS_top(
     // Input Signals
     .RF(PB_RF_FWD_ID),
     .R_EX(Output_MUX_ex),
-    .R_MEM(PW_in),
+    .R_MEM(PW_mem),
     .R_WB(PW_Out),
     .S(FWD_B_S_ID),
 
@@ -174,7 +179,9 @@ module MIPS_top(
   );
 
   Adder_8 add8(
-    .PC(PASG.Q0)
+    .PC(PASG.Q0),
+
+    .R(PC_8_out_ID)
   );
 
   wire S_mux;
@@ -242,10 +249,11 @@ module MIPS_top(
   wire BranchTaken_ex;
   wire Enable_A_ex;
   wire RF_LE_AND_ex;
+  wire[31:0] PC_8_out_ID;
   wire [31:0] PC_8_out_ex;
+  wire[15:0] Instruction_SOH_ex;
 
   //Control Signals
-  wire Branch_Control_ex;
   wire OS1_ex;
   wire[1:0] OS2_ex;
   wire[3:0] OP_ex;
@@ -268,13 +276,13 @@ module MIPS_top(
     .Clk(Clk),
     .Reset(Reset),
     
-    .PC8_in(32'b0),
-    .TA_in(32'b0),
-    .PA_in(32'b0),
-    .PB_in(32'b0),
-    .SA_in(5'b0),
-    .I_in(16'b0),
-    .RD_in(5'b0),
+    .PC8_in(PC_8_out_ID),
+    .TA_in(target_address),
+    .PA_in(FWD_A_Output),
+    .PB_in(FWD_B_Output),
+    .SA_in(Instruction[10:6]),
+    .I_in(Instruction[15:0]),
+    .RD_in(Write_Register_Out_ID),
 
     .OS1_in(OS1_mux),
     .OS2_in(OS2_mux),
@@ -296,7 +304,7 @@ module MIPS_top(
     .PA_out(PA_ex),
     .PB_out(PB_ex),
     .SA_out(SA_ex),
-    .I_out(),
+    .I_out(Instruction_SOH_ex),
     .RD_out(RD_EX),
 
     // Control Signals
@@ -317,6 +325,8 @@ module MIPS_top(
 
   // Output Signals
   wire[4:0] RD_mem;
+  wire[31:0] SD_mem;
+  wire[31:0] ALU_mem;
 
   // Control Signals
   wire RF_LE_mem;
@@ -332,7 +342,7 @@ module MIPS_top(
     .SA(SA_ex),
     .OS1(OS1_ex),
     .RB(PB_ex),
-    .I(Instruction[15:0]),
+    .I(Instruction_SOH_ex),
     .OS2(OS2_ex),
     .OP(OP_ex),
 
@@ -346,7 +356,7 @@ module MIPS_top(
 
   B_not_equal_zero BnotZ(
     // Input signals
-    .OB(alu_system.B),
+    .OB(ALU.B),
 
     // Output signals
     .NZ(NZ_ex)
@@ -358,7 +368,7 @@ module MIPS_top(
     .NZ(NZ_ex),
 
     // Output Signal
-    .not_NZ(Not_NZ)
+    .not_NZ(Not_NZ_ex)
   );
 
   Branch_Control_Unit BCU(
@@ -378,6 +388,7 @@ module MIPS_top(
     .not_zero(NZ_ex),
     .zero(Not_NZ_ex),
     .BranchTaken(BranchTaken_ex),
+    .S(WriteCond_ex),
 
     // Output
     .Out(Enable_A_ex)
@@ -407,8 +418,8 @@ module MIPS_top(
     .Reset(Reset),
 
     .ALU_in(Output_MUX_ex),
-    .SD_in(32'b0),
-    .RD_in(5'b0),
+    .SD_in(PB_ex),
+    .RD_in(RD_EX),
 
     .RF_LE_in(RF_LE_AND_ex),
     .RW_in(RW_ex),
@@ -417,8 +428,8 @@ module MIPS_top(
     .SE_in(SE_ex),
     .MemToReg_in(MemToReg_ex),
 
-    .ALU_out(),
-    .SD_out(),
+    .ALU_out(ALU_mem),
+    .SD_out(SD_mem),
     .RD_out(RD_mem),
 
     .RF_LE_out(RF_LE_mem),
@@ -432,6 +443,8 @@ module MIPS_top(
   wire[4:0] RD_wb;
   wire[31:0] PW_in;
   wire[31:0] PW_Out;
+  wire[31:0] DO_mem;
+  wire[31:0] PW_mem;
 
   //Control Signals
   wire RF_LE_wb;
@@ -439,11 +452,32 @@ module MIPS_top(
   wire[4:0] RW_wb;
   wire[31:0] PW_wb;
 
+  DataMemory DM(
+    // Input Signals
+    .DI(SD_mem),
+    .A(ALU_mem),
+    .RW(RW_mem),
+    .E(E_mem),
+    .size(Size_mem),
+    .SE(SE_mem),
+
+    // Output Signals
+    .DO(DO_mem)
+  );
+
+  Writeback_Data WD(
+    .DO(DO_mem),
+    .ALU(ALU_mem),
+    .S(MemToReg_mem),
+
+    .Out(PW_mem)
+  );
+
   MEMWB mem_wb(
     .Clk(Clk),
     .Reset(Reset),
-    .PW_in(PW_in),
-    .RW_in(5'b0),
+    .PW_in(PW_mem),
+    .RW_in(RD_mem),
 
     .RF_LE_in(RF_LE_mem),
 
